@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ICARUS Ultima - Pro License Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+    
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --panel-dark: #1e293b;
+            --accent: #10b981;
+            --accent-hover: #059669;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --brand-blue: #0f4c81; /* Biru Branding */
+            --discord: #5865F2;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            display: flex;
+            width: 100vw;
+            height: 100vh;
+            padding: 20px;
+            gap: 30px;
+            box-sizing: border-box;
+            align-items: center;
+        }
+
+        /* --- FORM SECTION --- */
+        .form-box {
+            width: 420px;
+            background: var(--panel-dark);
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            max-height: 95vh;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+
+        .form-box h2 { margin: 0 0 20px 0; font-size: 1.6rem; color: var(--accent); text-align: center; }
+        .input-group { margin-bottom: 12px; }
+        label { display: block; font-size: 12px; font-weight: 700; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; }
+        input, select { width: 100%; padding: 10px; background: #0f172a; border: 1px solid #334155; border-radius: 8px; color: white; font-size: 14px; box-sizing: border-box; }
+
+        .upload-area {
+            border: 2px dashed #475569; border-radius: 10px; padding: 15px;
+            text-align: center; cursor: pointer; background: rgba(0,0,0,0.2); margin-bottom: 15px;
+        }
+
+        .btn-group { display: flex; flex-direction: column; gap: 8px; }
+        button { padding: 12px; border-radius: 10px; font-weight: 800; font-size: 12px; cursor: pointer; text-transform: uppercase; transition: 0.2s; border: none; }
+        .btn-generate { background: var(--accent); color: white; }
+        .btn-discord { background: var(--discord); color: white; }
+        .btn-download { background: transparent; border: 1px solid var(--text-muted); color: var(--text-muted); }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* --- CARD PREVIEW --- */
+        .card-box { flex: 1; display: flex; justify-content: center; align-items: center; }
+        .license-card {
+            width: 1000px; height: 600px; background: #ffffff; border-radius: 30px; color: #1e293b;
+            padding: 50px 60px; box-sizing: border-box; position: relative;
+            box-shadow: 0 40px 80px rgba(0,0,0,0.6); display: flex; flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Pattern & Watermark ditipiskan supaya teks menang */
+        .card-pattern {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url('FOTO/guilochePatternHeli.png'); 
+            opacity: 1; /* Ditipiskan agar tidak menabrak teks */
+            pointer-events: none; z-index: 1;
+        }
+        .watermark-logo { 
+            position: absolute; top: 55%; left: 50%; transform: translate(-50%, -50%); 
+            width: 450px; opacity: 0.1; pointer-events: none; z-index: 2; 
+        }
+
+        /* Logo Samping Dibuat Jelas */
+        .corner-logo { position: absolute; top: 25px; width: 75px; height: 75px; object-fit: contain; z-index: 30; opacity: 1; }
+        .logo-left { left: 60px; } 
+        .logo-right { right: 60px; }
+
+        /* HEADER SECTION */
+        .card-header-group { text-align: center; margin-bottom: 30px; border-bottom: 4px solid var(--brand-blue); padding-bottom: 15px; margin-top: -20px;z-index: 30; position: relative; }
+        .card-header { font-size: 46px; font-weight: 800; color: #07355e; margin: 0; opacity: 1; text-shadow: 0.5px 0.5px 0px rgba(0,0,0,0.1); }
+        .card-sub { font-size: 22px; letter-spacing: 14px; font-weight: 700; color: #1e293b; opacity: 1; margin-top: 5px; }
+
+        /* CONTENT SECTION */
+        .card-content { display: flex; gap: 50px; z-index: 30; position: relative; }
+        .photo-section { display: flex; flex-direction: column; align-items: center; width: 250px; }
+        .photo-frame { width: 250px; height: 320px; background: #f1f5f9; border-radius: 15px; border: 6px solid #fff; box-shadow: 0 8px 20px rgba(0,0,0,0.15); overflow: hidden; margin-bottom: 15px; }
+        .photo-section { position: relative; } 
+        .photo-seal {
+            position: absolute;
+            bottom: 35px; 
+            right: -15px; 
+            width: 80px;  
+            opacity: 0.3; 
+            z-index: 35;  
+            pointer-events: none;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        }
+        .photo-frame img { width: 100%; height: 100%; object-fit: cover; }
+
+        .license-no-container { text-align: center; }
+        .license-no-label { font-size: 11px; font-weight: 800; color: #475569; letter-spacing: 1px; }
+        .license-no-value { font-family: 'Courier New', monospace; font-weight: 900; font-size: 24px; color: #000000; }
+
+        /* INFO TEXT - DIBUAT PEKAT */
+        .main-info { flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .info-item.full { grid-column: span 2; }
+        .info-label { display: block; font-size: 14px; font-weight: 800; color: #475569; margin-bottom: 2px; }
+        .info-value { display: block; font-size: 22px; font-weight: 700; color: #000000; text-transform: uppercase; opacity: 1; }
+        .name-large { font-size: 38px; color: #07355e; line-height: 1; margin-bottom: 10px; font-weight: 800; }
+        
+        .inst-label { font-size: 13px; font-weight: 800; color: #64748b; margin-top: 5px; }
+        .inst-value { font-size: 20px; color: #334155; font-weight: 700; }
+        
+        .authority-text { position: absolute; bottom: 40px; right: 60px; font-size: 14px; color: #1e293b; font-weight: 800; letter-spacing: 2px; z-index: 30; }
+
+        /* --- MODAL EDITOR --- */
+        #cropperModal {
+            display: none; position: fixed; z-index: 999; left: 0; top: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9); justify-content: center; align-items: center; flex-direction: column;
+        }
+        .modal-content { width: 80%; max-width: 500px; background: #1e293b; padding: 20px; border-radius: 20px; }
+        .img-container { width: 100%; height: 350px; background: #000; margin-bottom: 20px; }
+        #imageToCrop { max-width: 100%; }
+        .modal-btns { display: flex; gap: 10px; justify-content: center; }
+        .btn-save-crop { background: var(--accent); color: #fff; padding: 10px 25px; }
+        .btn-cancel { background: #ef4444; color: #fff; padding: 10px 25px; }
+    </style>
+</head>
+<body>
+
+<div id="cropperModal">
+    <div class="modal-content">
+        <h3 style="text-align:center; color:white; margin-top:0;">Edit Foto</h3>
+        <div class="img-container">
+            <img id="imageToCrop">
+        </div>
+        <div class="modal-btns">
+            <button class="btn-cancel" onclick="closeModal()">Batal</button>
+            <button class="btn-save-crop" onclick="cropImage()">Gunakan</button>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="form-box">
+        <h2>ICARUS Panel</h2>
+        
+        <label>Foto Pelaut</label>
+        <div class="upload-area" onclick="document.getElementById('fileElem').click()">
+            <p id="upload-text">Klik/Upload Foto</p>
+            <input type="file" id="fileElem" accept="image/*" style="display:none" onchange="initCropper(event)">
+        </div>
+
+        <div class="input-group">
+            <label>Nama Lengkap</label>
+            <input id="nama" type="text" value="NATANAEL PARDEDE">
+        </div>
+
+        <div class="input-group">
+            <label>Institution / Company</label>
+            <input id="inst" type="text" value="SAILOR">
+        </div>
+
+        <div class="input-group">
+            <label>Callsign Pelaut</label>
+            <input id="callsign" type="text" value="OR - 01">
+        </div>
+
+        <div class="input-group">
+            <label>Rating</label>
+            <input id="rating" type="text" value="TUG BOAT">
+        </div>
+
+        <div class="input-group">
+            <label>No. Lisensi</label>
+            <input id="license" type="text" value="SR/IC-0001">
+        </div>
+
+        <div style="display:flex; gap:10px">
+            <div class="input-group" style="flex:1">
+                <label>Tgl Lahir</label>
+                <input id="dob" type="date">
+            </div>
+            <div class="input-group" style="flex:1">
+                <label>Berlaku</label>
+                <input id="expiry" type="date">
+                <div class="shortcut-group" style="display:flex; gap:2px; margin-top:5px;">
+                    <button type="button" onclick="setAutoExpiry(1)" style="font-size:9px; padding:5px; flex:1; background:#334155; color:white;">+1B</button>
+                    <button type="button" onclick="setAutoExpiry(2)" style="font-size:9px; padding:5px; flex:1; background:#334155; color:white;">+2B</button>
+                    <button type="button" onclick="setAutoExpiry(12)" style="font-size:9px; padding:5px; flex:1; background:#334155; color:white;">+1T</button>
+                </div>
+            </div>
+        </div>
+
+        <hr style="border: 0; border-top: 1px solid #334155; margin: 20px 0;">
+        <label style="color: var(--accent);">Identitas Petugas (Pembuat)</label>
+        <div style="display:flex; gap:10px; margin-bottom: 20px;">
+            <select id="officerType" style="flex: 1;">
+                <option value="OR">OR (ORION)</option>
+                <option value="VP">VP (VIPER)</option>
+            </select>
+            <input id="officerNum" type="text" placeholder="00" style="flex: 1;" maxlength="2">
+        </div>
+
+        <div class="btn-group">
+            <button class="btn-generate" onclick="generate()">Preview Kartu</button>
+            <button class="btn-discord" id="btnDiscord" onclick="sendToDiscord()">Generate & Kirim ke Discord</button>
+            <button class="btn-download" onclick="downloadCard()">Simpan Ke Komputer</button>
+        </div>
+    </div>
+
+    <div class="card-box">
+        <div class="license-card" id="my-card">
+            
+            <div class="card-pattern"></div>
+            <img src="FOTO/logoHeli.png" class="watermark-logo">
+            
+            <img src="FOTO/logoIcarus.png" class="corner-logo logo-left">
+            <img src="FOTO/logoSheriff.png" class="corner-logo logo-right">
+            
+            <div class="card-header-group">
+                <h1 class="card-header">SHERIFF ICARUS ROXWOOD</h1>
+                <div class="card-sub">LISENSI PENERBANG</div>
+            </div>
+
+            <div class="card-content">
+                <div class="photo-section">
+                    <div class="photo-frame">
+                        <img id="preview-img" src="https://via.placeholder.com/250x320?text=UPLOAD+FOTO">
+                    </div>
+                    <img src="FOTO/tamengSheriff.png" class="photo-seal">
+                    <div class="license-no-container">
+                        <div class="license-no-label">NOMOR LISENSI</div>
+                        <div class="license-no-value" id="cLicense">SR/IC-0001</div>
+                    </div>
+                </div>
+                
+                <div class="main-info">
+                    <div class="info-item full">
+                        <span class="info-label">NAMA LENGKAP</span>
+                        <span class="info-value name-large" id="cNama">NATANAEL PARDEDE</span>
+                        <div class="inst-label">INSTITUTION</div>
+                        <div class="inst-value" id="cInst">SAILOR</div>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">CALL SIGN</span>
+                        <span class="info-value" id="cCallsign">OR - 01</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">DATE OF BIRTH</span>
+                        <span class="info-value" id="cDob">-</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">JENIS KELAMIN</span>
+                        <span class="info-value" id="cGender">LAKI-LAKI</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">RATING</span>
+                        <span class="info-value" id="cRating">TUG BOAT</span>
+                    </div>
+                    <div class="info-item full">
+                        <span class="info-label">BERLAKU HINGGA</span>
+                        <span class="info-value" style="color: #dc2626; font-size: 26px;" id="cExpiry">-</span>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+<script>
+    // JS tetap sama, hanya fungsi generate ditambahkan sedikit logic refresh
+    let cropper;
+    const imageToCrop = document.getElementById('imageToCrop');
+    const modal = document.getElementById('cropperModal');
+    const webhookURL = "https://discordapp.com/api/webhooks/1464988783140147456/rxQd7qLPVyiF1Z5UkbUsbUqW9t3HqQr4oOQxaVpSQVl9ly9ycsa4B38emN-mObo3Ac2T";
+
+    function initCropper(e) {
+        const files = e.target.files;
+        if (files && files.length > 0) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                imageToCrop.src = event.target.result;
+                modal.style.display = 'flex';
+                if (cropper) cropper.destroy();
+                cropper = new Cropper(imageToCrop, {
+                    aspectRatio: 250 / 320,
+                    viewMode: 1,
+                    dragMode: 'move',
+                    autoCropArea: 1,
+                    cropBoxMovable: false,
+                    cropBoxResizable: false,
+                });
+            };
+            reader.readAsDataURL(files[0]);
+        }
+    }
+
+    function cropImage() {
+        const canvas = cropper.getCroppedCanvas({ width: 500, height: 640 });
+        document.getElementById('preview-img').src = canvas.toDataURL();
+        modal.style.display = 'none';
+        document.getElementById('upload-text').innerText = "FOTO SIAP!";
+    }
+
+    function closeModal() {
+        modal.style.display = 'none';
+        document.getElementById('fileElem').value = '';
+    }
+
+    function formatDate(dateStr) {
+        if (!dateStr) return "-";
+        const d = new Date(dateStr);
+        return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase();
+    }
+
+    function setAutoExpiry(months) {
+        const today = new Date();
+        today.setMonth(today.getMonth() + months);
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
+        document.getElementById('expiry').value = `${year}-${month}-${day}`;
+        generate();
+    }
+
+    function generate() {
+        document.getElementById('cNama').innerText = document.getElementById('nama').value;
+        document.getElementById('cInst').innerText = document.getElementById('inst').value || "-";
+        document.getElementById('cCallsign').innerText = document.getElementById('callsign').value;
+        document.getElementById('cLicense').innerText = document.getElementById('license').value;
+        document.getElementById('cDob').innerText = formatDate(document.getElementById('dob').value);
+        document.getElementById('cExpiry').innerText = formatDate(document.getElementById('expiry').value);
+        document.getElementById('cRating').innerText = document.getElementById('rating').value;
+    }
+
+    async function sendToDiscord() {
+        const btn = document.getElementById('btnDiscord');
+        const offType = document.getElementById('officerType').value;
+        const offNum = document.getElementById('officerNum').value || "XX";
+        const callsignPetugas = `${offType}-${offNum}`;
+
+        btn.disabled = true;
+        btn.innerText = "MENGIRIM...";
+        generate(); 
+
+        const card = document.getElementById('my-card');
+        const canvas = await html2canvas(card, { scale: 2, useCORS: true });
+        
+        canvas.toBlob(async (blob) => {
+            const formData = new FormData();
+            const payload = {
+                content: `🚨 **LISENSI PELAUT BARU TERDAFTAR** 🚨\n👤 **Nama:** ${document.getElementById('nama').value}\n🆔 **No. Lic:** ${document.getElementById('license').value}\n✍️ **Petugas:** ${callsignPetugas}`,
+                username: "ICARUS AUTHORITY"
+            };
+            formData.append("payload_json", JSON.stringify(payload));
+            formData.append("file", blob, "license.png");
+
+            try {
+                const res = await fetch(webhookURL, { method: 'POST', body: formData });
+                if (res.ok) alert(`Berhasil dikirim oleh ${callsignPetugas}`);
+                else alert("Gagal kirim.");
+            } catch (err) {
+                alert("Error: " + err);
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "Generate & Kirim ke Discord";
+            }
+        }, 'image/png');
+    }
+
+    function downloadCard() {
+        const card = document.getElementById('my-card');
+        html2canvas(card, { scale: 3, useCORS: true }).then(canvas => {
+            const link = document.createElement('a');
+            link.download = 'Licensi_Icarus_' + document.getElementById('nama').value + '.png';
+            link.href = canvas.toDataURL("image/png");
+            link.click();
+        });
+    }
+</script>
+</body>
+</html>
