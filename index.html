@@ -153,7 +153,7 @@
     <div class="form-box">
         <h2>ICARUS Panel</h2>
         
-        <label>Foto Pelaut</label>
+        <label>Foto Penerbang</label>
         <div class="upload-area" onclick="document.getElementById('fileElem').click()">
             <p id="upload-text">Klik/Upload Foto</p>
             <input type="file" id="fileElem" accept="image/*" style="display:none" onchange="initCropper(event)">
@@ -181,7 +181,7 @@
                 <input id="rating" type="text" value="TUG BOAT">
             </div>
             <div class="input-group" style="flex:1">
-                <label>Callsign Pelaut</label>
+                <label>Callsign Penerbang</label>
                 <div class="flex-input">
                     <select id="callPrefix">
                         <option value="IC">IC</option>
@@ -263,7 +263,7 @@
             
             <div class="card-header-group">
                 <h1 class="card-header">SHERIFF ICARUS ROXWOOD</h1>
-                <div class="card-sub">LISENSI PELAUT</div>
+                <div class="card-sub">LISENSI PENERBANG</div>
             </div>
 
             <div class="card-content">
@@ -417,7 +417,7 @@
         canvas.toBlob(async (blob) => {
             const formData = new FormData();
             const payload = {
-                content: `🚨 **LISENSI PELAUT BARU** 🚨\n👤 **Nama:** ${document.getElementById('nama').value}\n📞 **No Telp:** ${phone}\n🆔 **No. Lic:** ${document.getElementById('license').value}\n✍️ **Petugas:** ${officerName}`,
+                content: `🚨 **LISENSI PENERBANG BARU** 🚨\n👤 **Nama:** ${document.getElementById('nama').value}\n📞 **No Telp:** ${phone}\n🆔 **No. Lic:** ${document.getElementById('license').value}\n✍️ **Petugas:** ${officerName}`,
                 username: "ICARUS AUTHORITY"
             };
             formData.append("payload_json", JSON.stringify(payload));
