@@ -136,6 +136,18 @@
         
         .authority-text { position: absolute; bottom: 40px; right: 60px; font-size: 14px; color: #1e293b; font-weight: 800; letter-spacing: 2px; z-index: 30; }
 
+                /* CSS untuk Overlay Tanda Tangan */
+        .signature-overlay {
+            position: absolute;
+            bottom: 15px;          /* Sesuaikan ketinggiannya dari bawah */
+            right: 10px;           /* Sesuaikan posisinya dari kanan agar pas di atas cap */
+            width: 220px;          /* Sesuaikan lebar TTD agar tidak terlalu kecil/besar */
+            height: auto;
+            z-index: 40;           /* Pastikan lebih tinggi dari z-index cap/watermark */
+            pointer-events: none;  /* Agar tidak mengganggu klik jika ada elemen di bawahnya */
+            opacity: 1;          /* Sedikit transparan agar menyatu dengan background kartu */
+            filter: multiply(1.2); /* Opsional: membantu menyatukan warna TTD dengan background */
+        }
         /* --- MODAL EDITOR --- */
         #cropperModal {
             display: none; position: fixed; z-index: 999; left: 0; top: 0; width: 100%; height: 100%;
@@ -186,7 +198,24 @@
 
         <div class="input-group">
             <label>Callsign Pelaut</label>
-            <input id="callsign" type="text" value="OR - 01">
+            <div style="display:flex; gap:10px;">
+                <select id="callsignPrefix" style="flex: 1;">
+                    <option value="IC">IC</option>
+                    <option value="GOV">GOV</option>
+                    <option value="MD">MD</option>
+                    <option value="VP">VP</option>
+                    <option value="CV">CV</option>
+                </select>
+                <input id="callsignNum" type="text" placeholder="00" style="flex: 1;" maxlength="2" value="01">
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label>Jenis Kelamin</label>
+            <select id="gender">
+                <option value="LAKI-LAKI">LAKI-LAKI</option>
+                <option value="PEREMPUAN">PEREMPUAN</option>
+            </select>
         </div>
 
         <div class="input-group">
@@ -240,6 +269,7 @@
             
             <img src="FOTO/logoIcarus.png" class="corner-logo logo-left">
             <img src="FOTO/logoSheriff.png" class="corner-logo logo-right">
+            <img src="FOTO/ttdNathan.png" class="signature-overlay">
             
             <div class="card-header-group">
                 <h1 class="card-header">SHERIFF ICARUS ROXWOOD</h1>
@@ -349,9 +379,20 @@
     }
 
     function generate() {
+        // 1. Update Nama & Instansi
         document.getElementById('cNama').innerText = document.getElementById('nama').value;
         document.getElementById('cInst').innerText = document.getElementById('inst').value || "-";
-        document.getElementById('cCallsign').innerText = document.getElementById('callsign').value;
+        
+        // 2. PERBAIKAN CALLSIGN: Ambil dari Prefix + Number
+        const prefix = document.getElementById('callsignPrefix').value;
+        const num = document.getElementById('callsignNum').value || "00";
+        // Pastikan ID di HTML kartu adalah 'cCallsign' (saya tambahkan 'c' agar konsisten)
+        document.getElementById('cCallsign').innerText = `${prefix} - ${num}`;
+        
+        // 3. Update Jenis Kelamin (Ini yang tadi kelupaan)
+        document.getElementById('cGender').innerText = document.getElementById('gender').value;
+
+        // 4. Update Lainnya
         document.getElementById('cLicense').innerText = document.getElementById('license').value;
         document.getElementById('cDob').innerText = formatDate(document.getElementById('dob').value);
         document.getElementById('cExpiry').innerText = formatDate(document.getElementById('expiry').value);
